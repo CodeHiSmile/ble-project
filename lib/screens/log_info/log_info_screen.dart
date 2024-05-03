@@ -1,17 +1,23 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:ble_project/global/global_data.dart';
+import 'package:ble_project/models/log_dto.dart';
+import 'package:ble_project/services/fire_storage_service.dart';
+import 'package:ble_project/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
 class LogInfoScreen extends StatefulWidget {
   final List<int>? logsData;
   final String? fileName;
+  final String? id;
 
   const LogInfoScreen({
     super.key,
     this.logsData,
     this.fileName,
+    this.id,
   });
 
   @override
@@ -27,10 +33,11 @@ class _LogInfoScreenState extends State<LogInfoScreen> {
         actions: [
           InkWell(
             onTap: () {
-              handleDownLoadDocument(
-                fileName: widget.fileName ?? "",
-                // content: widget.logsData.toString(),
-              );
+              // handleDownLoadDocument(
+              //   fileName: widget.fileName ?? "",
+              // );
+
+              saveToFirebase();
             },
             child: const Padding(
               padding: EdgeInsets.symmetric(
@@ -51,21 +58,15 @@ class _LogInfoScreenState extends State<LogInfoScreen> {
     );
   }
 
-  _write(String text) async {
-    final Directory directory = await getApplicationDocumentsDirectory();
-    final File file = File('${directory.path}/my_file.txt');
-    await file.writeAsString(text);
-  }
-
   Future<String?> getDownloadPath() async {
     Directory? directory;
     if (Platform.isIOS) {
       directory = await getApplicationDocumentsDirectory();
     } else {
-      directory = Directory('/storage/emulated/0/Download');
+      directory = Directory('/storage/emulated/0');
 
       if (!await directory.exists()) {
-        directory = Directory("/storage/emulated/0/Download");
+        directory = Directory('/storage/emulated/0');
       }
     }
     return directory.path;
@@ -73,14 +74,13 @@ class _LogInfoScreenState extends State<LogInfoScreen> {
 
   void handleDownLoadDocument({
     required String fileName,
-    // required String content,
   }) async {
     String? dir = await getDownloadPath();
     if (dir != null) {
       String filePath = "$dir/$fileName.txt";
 
       try {
-       String content = "abcd efgh";
+        String content = "abcdefgh";
 
         final bytes = base64.decode(content.replaceAll(RegExp(r'\s+'), ''));
         final file = File(filePath);
@@ -89,6 +89,35 @@ class _LogInfoScreenState extends State<LogInfoScreen> {
       } catch (e) {
         debugPrint("$e");
       }
+    }
+  }
+
+  void saveToFirebase() async {
+    try {
+      final dataConvertString = widget.logsData
+          .toString()
+          .replaceAll("[", '')
+          .replaceAll("]", "")
+          .toString();
+
+      final fireStorageService = FireStorageService();
+      final log = LogDto(
+        id: widget.id,
+        listData: dataConvertString,
+        userId: GlobalData.instance.userSelected?.id,
+        createDate: DateTime.now().toString(),
+      );
+      await fireStorageService.saveLog(log);
+
+      if (context.mounted) {
+        Snackbar.show(
+          ABC.c,
+          "Lưu dữ liệu thành công",
+          success: true,
+        );
+      }
+    } catch (e) {
+      print("Lỗi thêm data");
     }
   }
 }

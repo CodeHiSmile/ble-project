@@ -111,8 +111,10 @@ class _HistoryChildPageState extends State<HistoryChildPage> {
                             onTap: () {
                               MaterialPageRoute route = MaterialPageRoute(
                                 builder: (context) => LogInfoScreen(
+                                  id: "${item.id}",
                                   logsData: item.listData,
-                                  fileName: "${widget.arguments?.userName ?? ''}_${item.createDate}",
+                                  fileName:
+                                      "${widget.arguments?.userName ?? ''}_${item.createDate}",
                                 ),
                               );
 

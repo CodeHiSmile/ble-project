@@ -6,4 +6,8 @@ class GlobalData {
   static final GlobalData instance = GlobalData._privateConstructor();
 
   UserEntity? userSelected;
+
+  String? pathStorageAndroid;
+
+  String? pathStorageIOS;
 }

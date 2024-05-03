@@ -1,7 +1,10 @@
 import 'package:ble_project/global/global_data.dart';
+import 'package:ble_project/models/log_dto.dart';
 import 'package:ble_project/screens/create_user/create_user_page.dart';
 import 'package:ble_project/screens/history/history_page.dart';
 import 'package:ble_project/screens/scan_screen/scan_screen_page.dart';
+import 'package:ble_project/services/fire_storage_service.dart';
+import 'package:ble_project/utils/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,6 +51,8 @@ class _UsersChildPageState extends State<UsersChildPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
+          // saveToFirebase();
+
           final result = await Navigator.of(context).push(
             MaterialPageRoute(
               builder: (context) => const CreateUserPage(),
@@ -79,7 +84,6 @@ class _UsersChildPageState extends State<UsersChildPage> {
                       settings: const RouteSettings(name: '/ScanScreen'),
                     ),
                   );
-
                 },
                 child: Container(
                   decoration: BoxDecoration(
@@ -141,6 +145,32 @@ class _UsersChildPageState extends State<UsersChildPage> {
       ),
     );
   }
+
+  // void saveToFirebase() async {
+  //   try {
+  //     List<int> listData = [3, 4, 5, 76, 7, 4, 3, 3];
+  //     final dataConvertString = listData
+  //         .toString()
+  //         .replaceAll("[", '')
+  //         .replaceAll("]", "")
+  //         .toString();
+  //
+  //     final fireStorageService = FireStorageService();
+  //     final log = LogDto(
+  //       id: "5",
+  //       listData: dataConvertString,
+  //       userId: GlobalData.instance.userSelected?.id,
+  //       createDate: DateTime.now().toString(),
+  //     );
+  //     await fireStorageService.saveLog(log);
+  //
+  //     if (context.mounted) {
+  //       print("Lưu dữ liệu thành công");
+  //     }
+  //   } catch (e) {
+  //     print("Lỗi thêm data");
+  //   }
+  // }
 
   @override
   void dispose() {

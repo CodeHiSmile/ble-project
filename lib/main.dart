@@ -1,13 +1,29 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:ble_project/firebase_options.dart';
+import 'package:ble_project/global/global_data.dart';
+import 'package:ble_project/manager/storage_manager.dart';
+import 'package:ble_project/screens/log_info/log_info_screen.dart';
 import 'package:ble_project/screens/scan_screen/scan_screen_page.dart';
 import 'package:ble_project/screens/users/users_page.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import 'package:path_provider/path_provider.dart';
 import 'screens/bluetooth_off_screen.dart';
 
-void main() {
+Future<void> main() async {
   FlutterBluePlus.setLogLevel(LogLevel.verbose, color: true);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    statusBarColor: Colors.transparent,
+    statusBarIconBrightness: Brightness.dark,
+  ));
   runApp(const FlutterBlueApp());
 }
 
@@ -34,6 +50,21 @@ class _FlutterBlueAppState extends State<FlutterBlueApp> {
       }
     });
   }
+
+  // void _initApp() async {
+  //   await StorageManager.instance.init();
+  //   _checkInternetConnection();
+  //
+  //   // MARK: Check OS, get storage path, save to global data
+  //   if (Platform.isAndroid) {
+  //     GlobalData.instance.pathStorageAndroid = "/storage/emulated/0";
+  //   }
+  //
+  //   if (Platform.isIOS) {
+  //     final Directory appDocDir = await getApplicationDocumentsDirectory();
+  //     GlobalData.instance.pathStorageIOS = appDocDir.path;
+  //   }
+  // }
 
   @override
   void dispose() {
