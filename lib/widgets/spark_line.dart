@@ -389,7 +389,7 @@ class _SparklinePainter extends CustomPainter {
 
         String gridLineText = gridLinelabel != null
             ? gridLinelabel!(gridLineValue)
-            : gridLineValue.toStringAsPrecision(gridLineLabelPrecision);
+            : gridLineValue.toInt().toString();
 
         gridLineTextPainters.add(
           TextPainter(
